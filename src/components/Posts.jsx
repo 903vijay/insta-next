@@ -1,9 +1,24 @@
+import { app } from '@/firebase';
+import { collection, getDocs, getFirestore, orderBy, query } from 'firebase/firestore'
 import React from 'react'
+import Post from './Post';
 
-export default function Posts() {
+export default async function Posts() {
+  const db = getFirestore(app);
+  const q = query(collection(db,'posts'),orderBy
+  ('timestamp','desc'));
+  const querySnapshot = await getDocs(q)
+  let data = [];
+  querySnapshot.forEach((doc)=>{
+    data.push({id:doc.id, ...doc.data()})
+  })
   return (
     <div>
-      Post
+      {
+        data.map((post)=>(
+          <Post key={post.id} post={post}/>
+        ))
+      }
     </div>
   )
 }
